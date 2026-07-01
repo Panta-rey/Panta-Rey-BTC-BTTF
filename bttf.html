@@ -128,12 +128,18 @@
   .ctrack .cend{right:7px}
   .cmsg{font-size:12.5px;color:var(--mut);line-height:1.5}
   .cmsg.cwarn{color:var(--amber)}
+  .cchip{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:1px 6px;border-radius:6px;border:1px solid var(--line2);text-transform:uppercase;white-space:nowrap}
+  .cchip.up{color:var(--teal);border-color:var(--teal)} .cchip.nu{color:var(--amber);border-color:var(--amber)} .cchip.dn{color:var(--coral);border-color:var(--coral)}
+  .elegrow{margin-top:7px;font-family:var(--mono);font-size:10px;color:var(--mut2);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .eleg{display:inline-flex;align-items:center;gap:5px} .eleg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .edot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;flex:none}
+  .stalehint .k{color:var(--amber)!important} .stalehint .v{color:var(--amber)}
 
   .alist{display:flex;flex-direction:column;gap:7px}
   .arow{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);
     border-radius:11px;padding:10px 13px;cursor:pointer;transition:border-color .12s}
   .arow:hover{border-color:var(--echodim)}
-  .arow .ad{font-family:var(--mono);font-size:12px;color:var(--mut);width:78px;flex:none}
+  .arow .ad{font-family:var(--mono);font-size:12px;color:var(--mut);width:94px;flex:none}
   .arow .asim{font-family:var(--disp);font-weight:600;font-size:13px;color:var(--echo);width:46px;flex:none;text-align:center}
   .arow .ah{display:flex;gap:6px;flex:1;justify-content:flex-end;flex-wrap:wrap}
   .arow .ht{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--bg2);color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -181,7 +187,7 @@
   <div class="tag">Wann sah BTC schon einmal so aus — und wie ging es danach aus?</div>
   <div class="banner">
     <span>↺</span>
-    <span><b>Vergangene Häufigkeit, keine Vorhersage.</b> Das Tool zeigt echte historische Pfade nach ähnlichen Lagen. Märkte sind nicht stationär — was früher folgte, muss sich nicht wiederholen.</span>
+    <span><b>Vergangene Häufigkeit, keine Vorhersage.</b> Das Tool zeigt echte historische Pfade nach ähnlichen Lagen. Märkte sind nicht stationär — was früher folgte, muss sich nicht wiederholen. <b>BTC hat erst ~3 vollständige Zyklen</b>: jede Statistik hier stützt sich auf sehr wenige unabhängige Fälle.</span>
   </div>
 </header>
 
@@ -323,14 +329,15 @@ const EB={
   sim:{t:"Ähnlichkeit (Form)",what:"Wie stark die trendbereinigte Form übereinstimmen muss — Korrelation der Krümmung, nachdem aus jedem Fenster die lineare Steigung herausgerechnet wurde. 80% = nur sehr ähnlich geformte Verläufe zählen.",hist:"Achtung: Diese Prozente sind NICHT mit einer naiven Korrelation roher Preise vergleichbar — nach der Trendbereinigung fallen die Werte naturgemäss tiefer aus, weil die dominante gemeinsame Trendkomponente fehlt. Eine trendbereinigte Korrelation von 60–70% ist bereits eine echte Formähnlichkeit. Höher = strenger, weniger Treffer; wenn oben „zu wenige Analoga\" steht, hier senken."},
   tol:{t:"Regime-Toleranz",what:"Wie weit die Marktlage abweichen darf. 0 = exakt dieselben Buckets bei Mayer, RSI, Volatilität, Drawdown und Trend. Höhere Werte erlauben ähnliche, nicht identische Lagen.",hist:"Strenger (0–1) = bedeutungsvollere, aber seltenere Analoga. Lockerer = mehr Treffer, aber die Lagen sind weniger vergleichbar. Im Modus „Form\" ohne Wirkung."},
   fan:{t:"Der Forward-Fächer",what:"Jede dünne Linie ist ein ECHTER historischer Kursverlauf nach einer ähnlichen Lage, ab heute nach rechts projiziert (grün = endete höher, koralle = tiefer). Die gestrichelte indigo Linie ist der Median der Analoga — bewusst dünn und gestrichelt, damit sie nicht als Prognose-Linie missverstanden wird. Die Punkte unten markieren, wo in der Historie die Analoga liegen.",hist:"Das ist Vergangenheit, in die Zukunft gelegt — keine Vorhersage, und der Median erst recht kein Kursziel. Laufen die Linien weit auseinander, war der Ausgang historisch sehr unsicher; bündeln sie sich, war er einheitlicher. Märkte sind nicht stationär: Regimewechsel (ETF, Makro, Regulierung) können das Muster jederzeit entwerten."},
-  dist:{t:"Verteilung je Horizont",what:"Fasst die historischen Pfade je Zeithorizont zusammen. positiv = Anteil der Episoden, die höher endeten. Median = mittlere Veränderung. Spanne 10–90% = wo 80% der Ausgänge lagen. Ø grösster Dip = der typische tiefste Punkt unterwegs. Der Zeitstrahl darüber zeigt, WANN in der Historie die Episoden liegen.",hist:"Der Dip ist oft wichtiger als der Median: auch ein positiv endender Pfad kann zwischendurch tief eingebrochen sein — das ist das Pfad-Risiko, das eine reine Endzahl verschweigt. „Episoden\" sind unabhängige historische Fälle (zusammenhängende Treffer-Tage zu einem zusammengefasst). Aber Vorsicht: Die Episoden-Bereinigung löst nur die KURZFRISTIGE Autokorrelation. Klumpen alle Episoden in einer einzigen Marktphase (z.B. nur ein Bullenlauf), sind sie makroökonomisch trotzdem fast EINE Beobachtung — darum der Konzentrations-Hinweis über den Karten. BTC hat seit 2017 nur eine Handvoll wirklich unabhängiger Zyklen; eine hohe Episodenzahl täuscht leicht statistische Sicherheit vor."},
-  analogs:{t:"Historische Analoga",what:"Die einzelnen Vergangenheits-Momente, die zur heutigen Lage passen — mit Datum, Ähnlichkeit (Form-Korrelation) und dem tatsächlichen Ausgang nach den drei Horizonten. Antippen springt im Chart zu diesem Moment.",hist:"So siehst du, AUS WELCHEN echten Momenten die Statistik stammt — nicht nur eine Zahl, sondern die konkreten Vorbilder. Wenige, sehr alte oder stark verstreute Analoga solltest du mit Vorsicht lesen."},
+  dist:{t:"Verteilung je Horizont",what:"Fasst die historischen Pfade je Zeithorizont zusammen. positiv = Anteil der Episoden, die höher endeten. Median = mittlere Veränderung. Spanne 10–90% = wo 80% der Ausgänge lagen. Ø grösster Dip = der typische tiefste Punkt unterwegs. Der Zeitstrahl darüber zeigt, WANN in der Historie die Episoden liegen.",hist:"Der Dip ist oft wichtiger als der Median: auch ein positiv endender Pfad kann zwischendurch tief eingebrochen sein — das ist das Pfad-Risiko, das eine reine Endzahl verschweigt. „Episoden\" sind unabhängige historische Fälle (zusammenhängende Treffer-Tage zu einem zusammengefasst). Aber Vorsicht: Die Episoden-Bereinigung löst nur die KURZFRISTIGE Autokorrelation. Klumpen alle Episoden in einer einzigen Marktphase (z.B. nur ein Bullenlauf), sind sie makroökonomisch trotzdem fast EINE Beobachtung — darum der Konzentrations-Hinweis über den Karten. BTC hat seit 2017 nur eine Handvoll wirklich unabhängiger Zyklen; eine hohe Episodenzahl täuscht leicht statistische Sicherheit vor. Die FARBE der Punkte auf dem Zeitstrahl zeigt die Markt-Epoche (grau = Prä-2020, cyan = 2020–23, gold = ETF-Ära ab 2024) — so siehst du sofort, ob die Stichprobe die heutige Marktstruktur überhaupt enthält."},
+  analogs:{t:"Historische Analoga",what:"Die einzelnen Vergangenheits-Momente, die zur heutigen Lage passen — mit Datum, Ähnlichkeit (Form-Korrelation) und dem tatsächlichen Ausgang nach den drei Horizonten. Antippen springt im Chart zu diesem Moment.",hist:"So siehst du, AUS WELCHEN echten Momenten die Statistik stammt — nicht nur eine Zahl, sondern die konkreten Vorbilder. Wenige, sehr alte oder stark verstreute Analoga solltest du mit Vorsicht lesen. Der farbige Punkt vor dem Datum markiert die Markt-Epoche (grau/cyan/gold = Prä-2020 / 2020–23 / ETF-Ära)."},
+  vertrauen:{t:"Vertrauen / Belastbarkeit",what:"Ein zusammengefasstes Urteil, wie sehr du der Statistik trauen kannst — gebündelt aus drei Dingen: (1) Anzahl unabhängiger Episoden, (2) über welche Markt-Epochen sie streuen (Prä-2020 / 2020–23 / ETF-Ära ab 2024), (3) Fragilität: wie stark der Median springt, wenn man Ähnlichkeit/Toleranz nur leicht variiert. Das Urteil richtet sich nach dem SCHWÄCHSTEN dieser drei.",hist:"Bewusst EIN Signal statt vieler Einzelwarnungen — sonst stumpfst du gegen Caveats ab (Council-Entscheid). „fragil\" heisst nicht falsch, sondern: die Aussage hängt stark an deiner genauen Regler-Wahl, also nicht überinterpretieren. Der Epochen-Teil ist der ehrlichste: stammen fast alle Analoga aus der Vor-ETF-Zeit, beschreiben sie eine Marktstruktur, die es so nicht mehr gibt — die heutige ETF-/Institutionen-Ära ist erst ~2 Jahre alt und liefert zwangsläufig wenige Vergleichsfälle. Kein Grund, die Historie zu verwerfen, aber ein Grund, den Unsicherheitsfächer breiter zu denken. Bewusst nur ein LABEL, kein Filter — sonst würde man die Epoche so lange wählen, bis die Geschichte gefällt."},
   projektionen:{t:"Projektionen",what:"Drei unabhängige Sichten auf die mögliche Streuung ab heute, je einzeln ein-/ausblendbar. Analog-Fächer = echte Vergangenheits-Pfade nach ähnlichen Lagen (grün endete höher, koralle tiefer; gestrichelte Linie = Median). Bootstrap-Kegel = tausende simulierte Pfade aus BTCs Schwankung, um den heutigen Preis zentriert (reine Streuung, keine Richtung). DVOL-Band = die vom Optionsmarkt erwartete Streuung (±1σ/2σ).",hist:"Jede misst anders: der Fächer rückblickend-konkret inkl. echtem Drift, der Bootstrap driftfrei-simuliert, das DVOL-Band vorausschauend aus Optionspreisen (~30-Tage-Vola per Wurzel-t skaliert; enthält eine Risikoprämie, liegt also strukturell etwas über realisiert). Decken sich alle drei, ist das Bild konsistenter. Keine davon ist eine Vorhersage."},
   linien:{t:"Linien",what:"Orientierungs-Marken auf den Kerzen, je einzeln zuschaltbar. Runde Zahlen ($10k-Marken). Swing-Level (jüngste Pivot-Hochs/-Tiefs als weiche S/R — Koralle=Widerstand, Teal=Unterstützung). Volume Profile (POC = meistgehandeltes Level + Value Area = 70%-Volumen-Band der letzten 90 Tage).",hist:"Weiche behaviorale Orientierung — an solchen Marken clustern reale Orders/Stops, sie wirken oft als Magnet oder S/R, sind aber keine garantierten Wendepunkte. Das Volume Profile ist GEMESSEN (echtes Volumen), aber eine APPROXIMATION: echtes Volumen-pro-Preis bräuchte Tick-Daten (nicht frei machbar), darum wird das Volumen jeder 1h-Kerze gleichmässig über ihre Spanne verteilt — gut für die Form und einen ungefähren POC, nicht tick-exakt."},
   termine:{t:"Termine",what:"Kommende FOMC-, CPI- und Quartals-OPEX-Termine als Marker am oberen Rand der Zukunftszone. Diese Termine sind historisch mit erhöhter Volatilität verbunden.",hist:"WICHTIG: Die Analog-Verteilung WEISS NICHTS von diesen Terminen — die historischen Fenster hatten nicht zwingend in 5 Tagen ein FOMC. Die Marker sind eine manuelle Erinnerung an einen bekannten Vola-Katalysator, den die Statistik ausblendet, kein Teil der Rechnung. Termine bis Ende 2026 (CPI) bzw. 2027 (FOMC); danach nachzupflegen."},
   funding:{t:"Positionierung & Leverage",what:"Funding Rate und Open Interest des BTC-Perpetual (Binance, keyless) — wie überhebelt/einseitig der Markt gerade positioniert ist. Funding > 0: Longs zahlen Shorts (Long-Crowding); < 0: umgekehrt. ~0,01%/8h ist die neutrale Basis. Open Interest = offenes Kontraktvolumen in USD. Mit dem Toggle „Funding ins Regime\" wird Funding zur 6. Matching-Dimension — dann zählen nur Vergangenheits-Momente mit ähnlichem Leverage-Bild.",hist:"Bewusst GEMESSEN, nicht modelliert — das ist der Unterschied zu Liquidations-Heatmaps, die Hebel der Einzelpositionen nur annehmen (Schätzung auf Schätzung). Zwei ehrliche Grenzen: (1) Funding gibt es erst seit ~2019/2020 — schaltest du es ins Regime, werden Analoga faktisch auf die Perp-Ära ab 2020 eingeschränkt (frühe Historie hat kein Funding und fällt raus). Das ist oft sogar relevanter, weil BTCs Derivate-Markt damals ein anderer war. (2) Open Interest gibt es bei Binance frei nur ~30 Tage zurück — darum nur heutiger Kontext, NICHT im historischen Matching. Funding-Extreme hängen historisch mit Squeezes zusammen, sind aber für sich genommen kein Timing-Signal."},
   triang:{t:"Triangulation",what:"Vergleicht die erwartete Streuung der drei Methoden auf dem mittleren Horizont. Zeigt jeweils die 10–90%-Spanne — also wo 80% der Ausgänge lagen bzw. erwartet werden.",hist:"Der eigentliche Wert liegt im Vergleich. Aber er ist kein Eins-zu-eins: implizite Vola (DVOL) liegt wegen der Risikoprämie im Schnitt über realisierter Vola, deshalb ist ein moderater Überhang gegenüber der Historie der Normalfall, kein Signal. Erst ein DEUTLICHER Überhang heisst „der Markt erwartet wirklich mehr Unsicherheit\"; und ein DVOL UNTER der Historie — trotz der üblichen Prämie — ist das eigentlich auffällige, weil seltene Zeichen von Selbstzufriedenheit. Die Interpretationszeile unten liest die Zahlen genau so."},
-  cycle:{t:"Zyklus-Kontext & Termine",what:"Strukturelle Anker, die das Verhalten beeinflussen: die Halving-Phase (BTCs grober 4-Jahres-Rhythmus), die Zeit seit dem letzten Hoch, sowie die nächsten FOMC-, CPI- und Quartals-OPEX-Termine — um die herum sich Volatilität historisch ballt.",hist:"FOMC-Termine stammen vom offiziellen Fed-Kalender (federalreserve.gov), CPI-Termine vom BLS (bls.gov) — Stand 21.06.2026, beide Monate im Voraus offiziell publiziert. Es ist eine gepflegte, statische Liste, kein Live-Abruf: Termine reichen aktuell bis Ende 2026 (CPI) bzw. 2027 (FOMC) und müssen irgendwann nachgetragen werden. Halving-Phase und OPEX sind dagegen exakt berechenbar und veralten nie."},
+  cycle:{t:"Zyklus-Kontext & Termine",what:"Strukturelle Anker, die das Verhalten beeinflussen: die Halving-Phase (BTCs grober 4-Jahres-Rhythmus), die Zeit seit dem letzten Hoch, sowie die nächsten FOMC-, CPI- und Quartals-OPEX-Termine — um die herum sich Volatilität historisch ballt.",hist:"FOMC-Termine stammen vom offiziellen Fed-Kalender (federalreserve.gov), CPI-Termine vom BLS (bls.gov) — Stand 21.06.2026, beide Monate im Voraus offiziell publiziert. Es ist eine gepflegte, statische Liste, kein Live-Abruf: Termine reichen aktuell bis Ende 2026 (CPI) bzw. 2027 (FOMC) und müssen irgendwann nachgetragen werden. Halving-Phase und OPEX sind dagegen exakt berechenbar und veralten nie. Läuft eine Terminliste zur Neige (<60 Tage Restlauf), erscheint hier ein sichtbarer ⚠-Hinweis zum Nachpflegen — die Warnung steckt also nicht mehr nur in diesem Text."},
   clock:{t:"Markt-Uhr",what:"Zeigt, ob bestimmte Wochentage (und bei 4h: Tageszeiten) historisch häufiger positiv schlossen, plus die durchschnittliche Bewegung. % = Anteil positiver Bars an diesem Tag.",hist:"Reale Mikrostruktur-Effekte über Liquidität und Sessions — aber schwach, nicht stationär und nicht handelbar. Abweichungen von 50% sind meist klein und wandern über die Zeit. Auf Wochen-Basis nicht aussagekräftig."},
   round:{t:"Runde Zahlen",what:"Blendet die nächstgelegenen runden Preismarken ein ($10k-Schritte). An solchen Marken ballen sich oft Orders, weshalb sie als weiche Unterstützung/Widerstand wirken können.",hist:"Ein realer behavioraler Effekt (Menschen setzen Ziele und Stops an runden Zahlen), aber weich und unzuverlässig — die Linien sind Orientierung, keine Garantie für Wendepunkte."},
 };
@@ -500,7 +507,7 @@ let D=null;
 let chart=null, candleS=null, sma50S=null, sma200S=null, projSeries=[], medianS=null;
 let HORIZONS=[], HMAX=90, GAP=10, BARSEC=86400;
 let curTF="1d", loadingTF=false;
-let BOOT=null, DVOL=null, lastPaths=[], roundLines=[], swingLines=[], VP=null, vpLines=[];
+let BOOT=null, DVOL=null, lastPaths=[], lastConf=null, roundLines=[], swingLines=[], VP=null, vpLines=[];
 const SHOW={fan:true,boot:true,dvol:true,round:false,events:true,swings:false,fundReg:false,vp:false};
 
 /* Block-Bootstrap: simuliert mögliche Zukunftspfade aus den historischen Renditen */
@@ -730,6 +737,13 @@ function regimeDist(a,b){
   return d;
 }
 
+/* Epochen-Etikett je Zeitpunkt. Grobe Struktur-Brüche, bewusst KEINE Feinjustierung (an feinen
+   Grenzen zu drehen wäre schon Overfitting): früh = vor-institutionelle Ära, mittel = COVID/
+   Institutionalisierung, etf = Spot-ETF-Ära ab dem Launch am 11.01.2024. Reines Label, KEIN Filter. */
+const EPOCHS={pre:{k:"pre",s:"Prä-2020",c:"#5B6B7E"},mid:{k:"mid",s:"2020–23",c:"#3FBFD0"},etf:{k:"etf",s:"ETF ab 24",c:"#F0B429"}};
+const EPB_MID=Date.UTC(2020,0,1)/1000, EPB_ETF=Date.UTC(2024,0,11)/1000;
+function epochOf(tsec){return tsec<EPB_MID?EPOCHS.pre:tsec<EPB_ETF?EPOCHS.mid:EPOCHS.etf;}
+
 /* Schwere Pass: berechnet je Kandidaten-Fenster die Form-Korrelation und den Regime-Abstand EINMAL.
    So kann die Auto-Justierung danach beliebig viele (sim,tol)-Kombinationen billig durchprobieren. */
 function scanCandidates(W,mode){
@@ -761,7 +775,7 @@ function pathsFromScan(scan,mode,sim,tol,W){
     const p0=D.c[r.i];const path=[];for(let d=0;d<=HMAX;d++){const j=r.i+d;path.push(j<N?(D.c[j]/p0-1)*100:null);}
     const date=new Date(D.t[r.i]*1000).toISOString().slice(0,10);
     const simPct=mode==="regime"?null:Math.round(r.s*100);
-    return {i:r.i,date,simPct,path};
+    return {i:r.i,date,simPct,path,ep:epochOf(D.t[r.i])};
   });
 }
 
@@ -773,9 +787,11 @@ function getCtrl(){
 function recompute(){
   if(!D)return;
   const {W,mode,sim,tol}=getCtrl();
-  const paths=pathsFromScan(scanCandidates(W,mode),mode,sim,tol,W);
+  const scan=scanCandidates(W,mode);
+  const paths=pathsFromScan(scan,mode,sim,tol,W);
   lastPaths=paths;
-  renderBefund(paths);
+  lastConf=confidence(scan,paths,mode,sim,tol,W);
+  renderBefund(paths,lastConf);
   renderConcentration(paths);
   renderStats(paths);
   renderList(paths,mode);
@@ -805,6 +821,56 @@ function distMetrics(paths){
   const winSec=180*86400;let best=1;
   for(let a=0;a<ts.length;a++){let cnt=0;for(let b=a;b<ts.length&&ts[b]-ts[a]<=winSec;b++)cnt++;if(cnt>best)best=cnt;}
   return {years,share:best/ts.length};
+}
+
+/* ===== Belastbarkeits-Lesehilfe (Council-Runde 2): verdichtet Stichprobengrösse, Epochen-Mischung
+   und Fragilität zu EINEM ehrlichen Urteil. Bewusst gebündelt statt viele Einzelwarnungen —
+   sonst stumpft der Nutzer gegen Caveats ab. Das Urteil bestimmt das SCHWÄCHSTE Glied. ===== */
+function epochMix(paths){
+  const m={pre:0,mid:0,etf:0};for(const p of paths)m[p.ep.k]++;
+  const n=paths.length||1;const dom=Object.keys(m).reduce((a,b)=>m[a]>=m[b]?a:b);
+  return {counts:m,domKey:dom,domShare:m[dom]/n,etfShare:m.etf/n};
+}
+/* Fragilität = wie stark der Median (mittlerer Horizont) über BENACHBARTE Regler-Einstellungen springt.
+   Ein Scan, mehrfach billig geschwellt — kein Bootstrap-auf-Bootstrap. Spannweite in Prozentpunkten. */
+function fragility(scan,mode,sim,tol,W){
+  const midH=HORIZONS[1][1];
+  const simMin=+$("cSim").min/100,simMax=+$("cSim").max/100,tolMax=+$("cTol").max;
+  const usesShape=mode!=="regime",usesRegime=mode!=="shape";
+  const simSet=usesShape?[sim-0.08,sim-0.04,sim,sim+0.04,sim+0.08].filter(s=>s>=simMin&&s<=simMax):[null];
+  const tolSet=usesRegime?[...new Set([Math.max(0,tol-1),tol,Math.min(tolMax,tol+1)])]:[null];
+  const meds=[];
+  for(const s of simSet)for(const t of tolSet){
+    const p=pathsFromScan(scan,mode,s==null?0:s,t==null?0:t,W);
+    if(p.length>=3){const r=p.map(x=>x.path[midH]).filter(x=>x!=null);if(r.length>=3)meds.push(median(r));}
+  }
+  return meds.length<2?{spread:null,n:meds.length}:{spread:Math.max(...meds)-Math.min(...meds),n:meds.length};
+}
+function confidence(scan,paths,mode,sim,tol,W){
+  const n=paths.length;
+  if(n<3)return {level:"duenn",chip:"dünn",cls:"dn",epoch:null,frag:null};
+  const em=epochMix(paths);
+  const fr=fragility(scan,mode,sim,tol,W);
+  const fragLvl=fr.spread==null?"na":fr.spread<=3?"stabil":fr.spread<=7?"mässig":"fragil";
+  const epStale=em.etfShare<0.2&&em.domKey!=="etf";        // heutige Marktstruktur kaum vertreten
+  let level="robust";                                       // schwächstes Glied gewinnt
+  if(n<8||fragLvl==="mässig"||em.domShare>0.7||epStale)level="solide";
+  if(n<5||fragLvl==="fragil"||(epStale&&n<10))level="fragil";
+  const chip={robust:"robust",solide:"solide",fragil:"fragil"}[level];
+  const cls=level==="robust"?"up":level==="solide"?"nu":"dn";
+  const epochText=epStale
+      ? `überwiegend aus der ${em.domKey==="pre"?"Vor-2020":"Prä-ETF"}-Ära — die heutige Marktstruktur (ETF, Institutionen) ist dort kaum vertreten, also breiter denken`
+      : em.domShare>0.7?`geballt in der ${EPOCHS[em.domKey].s}-Ära`
+      : "brauchbar über mehrere Markt-Epochen gestreut";
+  const fragText=fragLvl==="na"?"Stabilität über Einstellungen nicht bestimmbar"
+      : fragLvl==="stabil"?"der Befund bleibt stabil, wenn man die Regler leicht variiert"
+      : fragLvl==="mässig"?"der Befund verschiebt sich merklich bei kleinen Regler-Änderungen"
+      : "der Befund springt stark, sobald man die Regler nur leicht ändert — nicht überinterpretieren";
+  return {level,chip,cls,epoch:em,frag:fr,fragLvl,epStale,epochText,fragText};
+}
+function confChip(conf){
+  if(!conf||conf.level==="duenn")return "";
+  return ` <span class="cchip ${conf.cls}">Vertrauen ${conf.chip}</span><button class="qmini" data-eb="vertrauen">?</button>`;
 }
 
 /* Auto-Justierung: sucht die STRENGSTE (sim,tol)-Kombination, die noch genug, breit gestreute
@@ -860,9 +926,9 @@ function autoTune(){
 
 /* Auto-Befund: liest die aktuelle Lage über alle Panels hinweg zu einem Klartext-Briefing zusammen.
    Strikt BESCHREIBEND — keine Empfehlung, keine Prognose. */
-function renderBefund(paths){
+function renderBefund(paths,conf){
   const head=$("befundHead"),el=$("befundBody");if(!el)return;
-  if(head)head.innerHTML=befundHead(paths);
+  if(head)head.innerHTML=befundHead(paths)+((conf&&paths&&paths.length>=3)?confChip(conf):"");
   if(!paths||paths.length<3){
     el.innerHTML='<p class="bp">Zu wenige ähnliche Lagen für einen belastbaren Befund. Ähnlichkeit senken, Regime-Toleranz erhöhen — oder die Auto-Justierung nutzen.</p>';
     return;
@@ -870,8 +936,12 @@ function renderBefund(paths){
   const fmt=v=>(v>=0?"+":"")+v.toFixed(1)+"%";
   const L=[];
   const dm=distMetrics(paths);
-  const distTxt=(dm.share>=0.6||dm.years<=2)?`konzentriert (${Math.round(dm.share*100)}% in ~6 Monaten) — die Zahlen stützen sich auf wenige Marktphasen, vorsichtig lesen`:`über ${dm.years} Jahre verteilt`;
-  L.push(`<b>Stichprobe:</b> ${paths.length} ähnliche Lagen, ${distTxt}.`);
+  const distTxt=(dm.share>=0.6||dm.years<=2)?`${Math.round(dm.share*100)}% in ~6 Monaten geballt`:`über ${dm.years} Jahre verteilt`;
+  if(conf&&conf.epochText){
+    L.push(`<b>Belastbarkeit:</b> ${paths.length} Episoden, ${distTxt}; ${conf.epochText}; ${conf.fragText}.`);
+  }else{
+    L.push(`<b>Stichprobe:</b> ${paths.length} ähnliche Lagen, ${distTxt}.`);
+  }
   const [lbl,h]=HORIZONS[1];
   const rets=paths.map(p=>p.path[h]).filter(x=>x!=null);
   if(rets.length>=3){
@@ -898,7 +968,7 @@ function renderBefund(paths){
   if(ev)L.push(`<b>Nächster Vola-Termin:</b> ${ev[0]} in ${ev[1]} Tagen.`);
   el.innerHTML=L.map(l=>`<p class="bp">${l}</p>`).join("")+`<p class="bdisc">Reine Beschreibung der aktuellen Lage — keine Empfehlung, keine Prognose.</p>`;
 }
-function refreshBefund(){if(lastPaths)renderBefund(lastPaths);}
+function refreshBefund(){if(lastPaths)renderBefund(lastPaths,lastConf);}
 
 function renderConcentration(paths){
   const el=$("concNote");if(!el)return;
@@ -910,13 +980,16 @@ function renderConcentration(paths){
   const winSec=180*86400;let best=1;
   for(let a=0;a<ts.length;a++){let cnt=0;for(let b=a;b<ts.length&&ts[b]-ts[a]<=winSec;b++)cnt++;if(cnt>best)best=cnt;}
   const share=Math.round(best/ts.length*100);
-  const dots=ts.map(t=>`<i class="cdot" style="left:${((t-t0)/span*100).toFixed(2)}%"></i>`).join("");
+  const dots=ts.map(t=>`<i class="cdot" style="left:${((t-t0)/span*100).toFixed(2)}%;background:${epochOf(t).c}"></i>`).join("");
   const warn=share>=60||years<=2;
   const msg=warn
     ? `Konzentriert: ${share}% der Episoden liegen in einem einzigen ~6-Monats-Fenster, verteilt auf nur ${years} Kalenderjahr${years>1?"e":""}. Effektiv stützen sich die Zahlen unten auf sehr wenige unabhängige Marktphasen — die Prozentwerte sind weicher, als sie aussehen.`
     : `Verteilt über ${years} Kalenderjahre · dichtester Cluster ${share}% in ~6 Monaten. Brauchbare Streuung über mehrere Marktphasen.`;
+  const present=["pre","mid","etf"].filter(k=>paths.some(p=>p.ep.k===k));
+  const leg=present.map(k=>`<span class="eleg"><i style="background:${EPOCHS[k].c}"></i>${EPOCHS[k].s} (${paths.filter(p=>p.ep.k===k).length})</span>`).join("");
   el.innerHTML=`<div class="ctrack"><span class="cedge cstart">${new Date(t0*1000).getUTCFullYear()}</span>${dots}<span class="cedge cend">heute</span></div>
-    <div class="cmsg ${warn?"cwarn":""}">${warn?"⚠ ":""}${msg}</div>`;
+    <div class="cmsg ${warn?"cwarn":""}">${warn?"⚠ ":""}${msg}</div>
+    <div class="elegrow">Epochen: ${leg}</div>`;
 }
 
 function renderStats(paths){
@@ -929,12 +1002,13 @@ function renderStats(paths){
     const md=median(rets),p10=quantile(rets,.1),p90=quantile(rets,.9),dip=median(dips);
     const posc=pos>=60?"up":pos<=40?"dn":"nu";
     const fmt=v=>(v>=0?"+":"")+v.toFixed(1)+"%";
+    const arr=v=>v>=0?"▲":"▼";
     return `<div class="hcard">
       <div class="hz">${lbl}<span class="n">${rets.length} Episoden</span></div>
       <div class="hrow"><span class="k">positiv</span><span class="v ${posc}">${pos}%</span></div>
-      <div class="hrow"><span class="k">Median</span><span class="v ${md>=0?'up':'dn'}">${fmt(md)}</span></div>
+      <div class="hrow"><span class="k">Median</span><span class="v ${md>=0?'up':'dn'}">${arr(md)} ${fmt(md)}</span></div>
       <div class="hrow"><span class="k">Spanne 10–90%</span><span class="v nu">${fmt(p10)} … ${fmt(p90)}</span></div>
-      <div class="hrow"><span class="k">Ø grösster Dip</span><span class="v dn">${fmt(dip)}</span></div>
+      <div class="hrow"><span class="k">Ø grösster Dip</span><span class="v dn">▼ ${fmt(dip)}</span></div>
     </div>`;
   }).join("");
 }
@@ -944,10 +1018,10 @@ function renderList(paths,mode){
   if(!paths.length){l.innerHTML='<div class="empty">Keine Analoga bei dieser Einstellung.</div>';return;}
   const sorted=[...paths].sort((a,b)=>(b.simPct??0)-(a.simPct??0)||a.date<b.date?1:-1).slice(0,40);
   l.innerHTML=sorted.map(p=>{
-    const tag=(lbl,h)=>{const r=p.path[h];if(r==null)return `<span class="ht">${lbl} –</span>`;return `<span class="ht" style="color:${r>=0?'var(--teal)':'var(--coral)'}">${lbl} ${r>=0?'+':''}${r.toFixed(1)}%</span>`;};
+    const tag=(lbl,h)=>{const r=p.path[h];if(r==null)return `<span class="ht">${lbl} –</span>`;return `<span class="ht" style="color:${r>=0?'var(--teal)':'var(--coral)'}">${lbl} ${r>=0?'▲':'▼'}${Math.abs(r).toFixed(1)}%</span>`;};
     const sim=p.simPct!=null?p.simPct+"%":"Regime";
     const tags=HORIZONS.map(([lbl,h,short])=>tag(short||lbl,h)).join("");
-    return `<div class="arow" data-i="${p.i}"><span class="ad">${p.date}</span><span class="asim">${sim}</span>
+    return `<div class="arow" data-i="${p.i}"><span class="ad" title="${p.ep.s}"><i class="edot" style="background:${p.ep.c}"></i>${p.date}</span><span class="asim">${sim}</span>
       <span class="ah">${tags}</span></div>`;
   }).join("");
   l.querySelectorAll(".arow").forEach(el=>el.addEventListener("click",()=>jumpTo(+el.dataset.i)));
@@ -1095,13 +1169,22 @@ function renderPhaseC(){ renderPositioning(); renderCycle(); renderClock(); }
 
 function renderCycle(){
   const c=cycleContext();
+  const nowMs=D.t[D.N-1]*1000;
   const ev=(lbl,d,days)=>`<div class="tr"><span class="k">${lbl}</span><span class="v">${d||"—"}${days!=null?` · in ${days} T`:""}</span></div>`;
+  // Stale-Hinweis sichtbar auf der Fläche — nur wenn eine Terminliste WIRKLICH zur Neige geht (<60 T Restlauf).
+  const lastF=FOMC_DATES[FOMC_DATES.length-1],lastC=CPI_DATES[CPI_DATES.length-1];
+  const dF=(Date.parse(lastF+"T16:00:00Z")-nowMs)/86400000,dC=(Date.parse(lastC+"T16:00:00Z")-nowMs)/86400000;
+  const sm=[];
+  if(c.cpi==null||dC<60)sm.push(`CPI-Liste endet ${lastC}`);
+  if(c.fomc==null||dF<60)sm.push(`FOMC-Liste endet ${lastF}`);
+  const stale=sm.length?`<div class="tr stalehint"><span class="k">⚠ Terminliste</span><span class="v">${sm.join(" · ")} — bald nachpflegen</span></div>`:"";
   $("cycleBox").innerHTML=`
     <div class="tr"><span class="k">Halving-Phase</span><span class="v">Tag ${c.days} · ${c.cyclePct}% durch ~4-Jahres-Zyklus</span></div>
     <div class="tr"><span class="k">Seit letztem Hoch</span><span class="v">${c.dHigh} Bars · Hoch $${Math.round(c.hiPrice).toLocaleString("de-CH")}</span></div>
     ${ev("Nächstes FOMC",c.fomc,c.fomcDays)}
     ${ev("Nächste CPI-Veröffentlichung",c.cpi,c.cpiDays)}
-    ${ev("Nächster Quartals-OPEX",c.opex,c.opexDays)}`;
+    ${ev("Nächster Quartals-OPEX",c.opex,c.opexDays)}
+    ${stale}`;
 }
 function renderClock(){
   const {wd,hr}=computeClock();
