@@ -199,7 +199,8 @@
     <span><b>2 · Chart</b> zeigt echte historische Verläufe nach ähnlichen Lagen, nach rechts projiziert. Vergangenheit, keine Prognose.</span>
     <span><b>3 · Jedes ?</b> erklärt sein Element ehrlich, inklusive Schwächen. Die <b>Analog-Liste</b> unten ist anklickbar und springt im Chart zum Moment.</span>
   </div>
-  <div class="introhint">Stell oben die Regler ein — oder klick <b>↺ Auto-Justierung</b>, dann wählt das Tool eine gute Stichprobe für dich.</div>
+  <div class="introhint">Stell oben die Regler ein — oder klick <b>↺ Auto-Justierung</b>, dann wählt das Tool eine gute Stichprobe für dich. Deine Einstellungen bleiben gespeichert (⟲ Standard setzt zurück).</div>
+  <div class="introhint">Und wichtig: Dieses Cockpit gehört zum <b>Trading-Topf</b>. Entscheidungen über langfristiges Spar-Kapital fallen woanders — ein 90-Tage-Fächer sagt nichts über eine Mehrjahres-These.</div>
 </div>
 
 <div class="controls" id="controls" style="display:none">
@@ -243,6 +244,7 @@
 <div class="autorow" id="autorow" style="display:none">
   <span class="autonote" id="autoNote">Setzt automatisch die strengste Ähnlichkeit/Toleranz, die noch genügend, breit gestreute Episoden liefert — nie auf ein Marktergebnis optimiert.</span>
   <button class="autobtn" id="autoTune">↺ Auto-Justierung</button>
+  <button class="autobtn" id="resetBtn" title="Gespeicherte Einstellungen löschen und mit Standardwerten neu laden">⟲ Standard</button>
 </div>
 
 <div id="app" style="display:none">
@@ -303,6 +305,7 @@
 
 <div class="foot" id="foot" style="display:none">
   Quelle: Binance BTCUSDT Tageskerzen · Matching: Pearson-Korrelation der TRENDBEREINIGTEN log-Form + Regime-Buckets · Episoden-bereinigt (überlappende Treffer zählen einmal) · keine Zukunfts-Information im Matching (Indikatoren rückwärtsgerichtet, Vol-Perzentil expandierend).
+  <br><span id="dataStamp"></span> · Einzelquellen ohne Redundanz: Binance Spot/Futures, Deribit — fällt eine aus, zeigt ihr Panel ehrlich „—" statt einer Schätzung · Terminlisten-Stand 21.06.2026 · <b>Back to the Future v10</b>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -331,13 +334,13 @@ const EB={
   fan:{t:"Der Forward-Fächer",what:"Jede dünne Linie ist ein ECHTER historischer Kursverlauf nach einer ähnlichen Lage, ab heute nach rechts projiziert (grün = endete höher, koralle = tiefer). Die gestrichelte indigo Linie ist der Median der Analoga — bewusst dünn und gestrichelt, damit sie nicht als Prognose-Linie missverstanden wird. Die Punkte unten markieren, wo in der Historie die Analoga liegen.",hist:"Das ist Vergangenheit, in die Zukunft gelegt — keine Vorhersage, und der Median erst recht kein Kursziel. Laufen die Linien weit auseinander, war der Ausgang historisch sehr unsicher; bündeln sie sich, war er einheitlicher. Märkte sind nicht stationär: Regimewechsel (ETF, Makro, Regulierung) können das Muster jederzeit entwerten."},
   dist:{t:"Verteilung je Horizont",what:"Fasst die historischen Pfade je Zeithorizont zusammen. positiv = Anteil der Episoden, die höher endeten. Median = mittlere Veränderung. Spanne 10–90% = wo 80% der Ausgänge lagen. Ø grösster Dip = der typische tiefste Punkt unterwegs. Der Zeitstrahl darüber zeigt, WANN in der Historie die Episoden liegen.",hist:"Der Dip ist oft wichtiger als der Median: auch ein positiv endender Pfad kann zwischendurch tief eingebrochen sein — das ist das Pfad-Risiko, das eine reine Endzahl verschweigt. „Episoden\" sind unabhängige historische Fälle (zusammenhängende Treffer-Tage zu einem zusammengefasst). Aber Vorsicht: Die Episoden-Bereinigung löst nur die KURZFRISTIGE Autokorrelation. Klumpen alle Episoden in einer einzigen Marktphase (z.B. nur ein Bullenlauf), sind sie makroökonomisch trotzdem fast EINE Beobachtung — darum der Konzentrations-Hinweis über den Karten. BTC hat seit 2017 nur eine Handvoll wirklich unabhängiger Zyklen; eine hohe Episodenzahl täuscht leicht statistische Sicherheit vor. Die FARBE der Punkte auf dem Zeitstrahl zeigt die Markt-Epoche (grau = Prä-2020, cyan = 2020–23, gold = ETF-Ära ab 2024) — so siehst du sofort, ob die Stichprobe die heutige Marktstruktur überhaupt enthält."},
   analogs:{t:"Historische Analoga",what:"Die einzelnen Vergangenheits-Momente, die zur heutigen Lage passen — mit Datum, Ähnlichkeit (Form-Korrelation) und dem tatsächlichen Ausgang nach den drei Horizonten. Antippen springt im Chart zu diesem Moment.",hist:"So siehst du, AUS WELCHEN echten Momenten die Statistik stammt — nicht nur eine Zahl, sondern die konkreten Vorbilder. Wenige, sehr alte oder stark verstreute Analoga solltest du mit Vorsicht lesen. Der farbige Punkt vor dem Datum markiert die Markt-Epoche (grau/cyan/gold = Prä-2020 / 2020–23 / ETF-Ära)."},
-  vertrauen:{t:"Vertrauen / Belastbarkeit",what:"Ein zusammengefasstes Urteil, wie sehr du der Statistik trauen kannst — gebündelt aus drei Dingen: (1) Anzahl unabhängiger Episoden, (2) über welche Markt-Epochen sie streuen (Prä-2020 / 2020–23 / ETF-Ära ab 2024), (3) Fragilität: wie stark der Median springt, wenn man Ähnlichkeit/Toleranz nur leicht variiert. Das Urteil richtet sich nach dem SCHWÄCHSTEN dieser drei.",hist:"Bewusst EIN Signal statt vieler Einzelwarnungen — sonst stumpfst du gegen Caveats ab (Council-Entscheid). „fragil\" heisst nicht falsch, sondern: die Aussage hängt stark an deiner genauen Regler-Wahl, also nicht überinterpretieren. Der Epochen-Teil ist der ehrlichste: stammen fast alle Analoga aus der Vor-ETF-Zeit, beschreiben sie eine Marktstruktur, die es so nicht mehr gibt — die heutige ETF-/Institutionen-Ära ist erst ~2 Jahre alt und liefert zwangsläufig wenige Vergleichsfälle. Kein Grund, die Historie zu verwerfen, aber ein Grund, den Unsicherheitsfächer breiter zu denken. Bewusst nur ein LABEL, kein Filter — sonst würde man die Epoche so lange wählen, bis die Geschichte gefällt."},
+  vertrauen:{t:"Vertrauen / Belastbarkeit",what:"Ein zusammengefasstes Urteil, wie sehr du der Statistik trauen kannst — gebündelt aus drei Dingen: (1) Anzahl unabhängiger Episoden, (2) über welche Markt-Epochen sie streuen (Prä-2020 / 2020–23 / ETF-Ära ab 2024), (3) Fragilität: wie stark der Median springt, wenn man Ähnlichkeit, Toleranz ODER das Fenster nur leicht variiert — die gemessene Spannweite steht in Prozentpunkten (Pp) in der Belastbarkeits-Zeile. Das Urteil richtet sich nach dem SCHWÄCHSTEN dieser drei.",hist:"Bewusst EIN Signal statt vieler Einzelwarnungen — sonst stumpfst du gegen Caveats ab (Council-Entscheid). „fragil\" heisst nicht falsch, sondern: die Aussage hängt stark an deiner genauen Regler-Wahl, also nicht überinterpretieren. Der Epochen-Teil ist der ehrlichste: stammen fast alle Analoga aus der Vor-ETF-Zeit, beschreiben sie eine Marktstruktur, die es so nicht mehr gibt — die heutige ETF-/Institutionen-Ära ist erst ~2 Jahre alt und liefert zwangsläufig wenige Vergleichsfälle. Kein Grund, die Historie zu verwerfen, aber ein Grund, den Unsicherheitsfächer breiter zu denken. Bewusst nur ein LABEL, kein Filter — sonst würde man die Epoche so lange wählen, bis die Geschichte gefällt."},
   projektionen:{t:"Projektionen",what:"Drei unabhängige Sichten auf die mögliche Streuung ab heute, je einzeln ein-/ausblendbar. Analog-Fächer = echte Vergangenheits-Pfade nach ähnlichen Lagen (grün endete höher, koralle tiefer; gestrichelte Linie = Median). Bootstrap-Kegel = tausende simulierte Pfade aus BTCs Schwankung, um den heutigen Preis zentriert (reine Streuung, keine Richtung). DVOL-Band = die vom Optionsmarkt erwartete Streuung (±1σ/2σ).",hist:"Jede misst anders: der Fächer rückblickend-konkret inkl. echtem Drift, der Bootstrap driftfrei-simuliert, das DVOL-Band vorausschauend aus Optionspreisen (~30-Tage-Vola per Wurzel-t skaliert; enthält eine Risikoprämie, liegt also strukturell etwas über realisiert). Decken sich alle drei, ist das Bild konsistenter. Keine davon ist eine Vorhersage."},
   linien:{t:"Linien",what:"Orientierungs-Marken auf den Kerzen, je einzeln zuschaltbar. Runde Zahlen ($10k-Marken). Swing-Level (jüngste Pivot-Hochs/-Tiefs als weiche S/R — Koralle=Widerstand, Teal=Unterstützung). Volume Profile (POC = meistgehandeltes Level + Value Area = 70%-Volumen-Band der letzten 90 Tage).",hist:"Weiche behaviorale Orientierung — an solchen Marken clustern reale Orders/Stops, sie wirken oft als Magnet oder S/R, sind aber keine garantierten Wendepunkte. Das Volume Profile ist GEMESSEN (echtes Volumen), aber eine APPROXIMATION: echtes Volumen-pro-Preis bräuchte Tick-Daten (nicht frei machbar), darum wird das Volumen jeder 1h-Kerze gleichmässig über ihre Spanne verteilt — gut für die Form und einen ungefähren POC, nicht tick-exakt."},
   termine:{t:"Termine",what:"Kommende FOMC-, CPI- und Quartals-OPEX-Termine als Marker am oberen Rand der Zukunftszone. Diese Termine sind historisch mit erhöhter Volatilität verbunden.",hist:"WICHTIG: Die Analog-Verteilung WEISS NICHTS von diesen Terminen — die historischen Fenster hatten nicht zwingend in 5 Tagen ein FOMC. Die Marker sind eine manuelle Erinnerung an einen bekannten Vola-Katalysator, den die Statistik ausblendet, kein Teil der Rechnung. Termine bis Ende 2026 (CPI) bzw. 2027 (FOMC); danach nachzupflegen."},
   funding:{t:"Positionierung & Leverage",what:"Funding Rate und Open Interest des BTC-Perpetual (Binance, keyless) — wie überhebelt/einseitig der Markt gerade positioniert ist. Funding > 0: Longs zahlen Shorts (Long-Crowding); < 0: umgekehrt. ~0,01%/8h ist die neutrale Basis. Open Interest = offenes Kontraktvolumen in USD. Mit dem Toggle „Funding ins Regime\" wird Funding zur 6. Matching-Dimension — dann zählen nur Vergangenheits-Momente mit ähnlichem Leverage-Bild.",hist:"Bewusst GEMESSEN, nicht modelliert — das ist der Unterschied zu Liquidations-Heatmaps, die Hebel der Einzelpositionen nur annehmen (Schätzung auf Schätzung). Zwei ehrliche Grenzen: (1) Funding gibt es erst seit ~2019/2020 — schaltest du es ins Regime, werden Analoga faktisch auf die Perp-Ära ab 2020 eingeschränkt (frühe Historie hat kein Funding und fällt raus). Das ist oft sogar relevanter, weil BTCs Derivate-Markt damals ein anderer war. (2) Open Interest gibt es bei Binance frei nur ~30 Tage zurück — darum nur heutiger Kontext, NICHT im historischen Matching. Funding-Extreme hängen historisch mit Squeezes zusammen, sind aber für sich genommen kein Timing-Signal."},
   triang:{t:"Triangulation",what:"Vergleicht die erwartete Streuung der drei Methoden auf dem mittleren Horizont. Zeigt jeweils die 10–90%-Spanne — also wo 80% der Ausgänge lagen bzw. erwartet werden.",hist:"Der eigentliche Wert liegt im Vergleich. Aber er ist kein Eins-zu-eins: implizite Vola (DVOL) liegt wegen der Risikoprämie im Schnitt über realisierter Vola, deshalb ist ein moderater Überhang gegenüber der Historie der Normalfall, kein Signal. Erst ein DEUTLICHER Überhang heisst „der Markt erwartet wirklich mehr Unsicherheit\"; und ein DVOL UNTER der Historie — trotz der üblichen Prämie — ist das eigentlich auffällige, weil seltene Zeichen von Selbstzufriedenheit. Die Interpretationszeile unten liest die Zahlen genau so."},
-  cycle:{t:"Zyklus-Kontext & Termine",what:"Strukturelle Anker, die das Verhalten beeinflussen: die Halving-Phase (BTCs grober 4-Jahres-Rhythmus), die Zeit seit dem letzten Hoch, sowie die nächsten FOMC-, CPI- und Quartals-OPEX-Termine — um die herum sich Volatilität historisch ballt.",hist:"FOMC-Termine stammen vom offiziellen Fed-Kalender (federalreserve.gov), CPI-Termine vom BLS (bls.gov) — Stand 21.06.2026, beide Monate im Voraus offiziell publiziert. Es ist eine gepflegte, statische Liste, kein Live-Abruf: Termine reichen aktuell bis Ende 2026 (CPI) bzw. 2027 (FOMC) und müssen irgendwann nachgetragen werden. Halving-Phase und OPEX sind dagegen exakt berechenbar und veralten nie. Läuft eine Terminliste zur Neige (<60 Tage Restlauf), erscheint hier ein sichtbarer ⚠-Hinweis zum Nachpflegen — die Warnung steckt also nicht mehr nur in diesem Text."},
+  cycle:{t:"Zyklus-Kontext & Termine",what:"Strukturelle Anker, die das Verhalten beeinflussen: die Halving-Phase (BTCs grober 4-Jahres-Rhythmus), die Zeit seit dem letzten Hoch, sowie die nächsten FOMC-, CPI- und Quartals-OPEX-Termine — um die herum sich Volatilität historisch ballt. Dazu die 30-Tage-Veränderung als Euphorie-Basisrate: verdoppelt sich der Preis binnen ~30 Tagen, war das historisch eines der zuverlässigsten Überhitzungs-Signale (danach folgten regelmässig Rücksetzer von −60% und mehr) — dann erscheint hier ein ⚠ Blasen-Radar-Hinweis. Weiche Tendenz aus wenigen historischen Fällen, kein Timing-Signal.",hist:"FOMC-Termine stammen vom offiziellen Fed-Kalender (federalreserve.gov), CPI-Termine vom BLS (bls.gov) — Stand 21.06.2026, beide Monate im Voraus offiziell publiziert. Es ist eine gepflegte, statische Liste, kein Live-Abruf: Termine reichen aktuell bis Ende 2026 (CPI) bzw. 2027 (FOMC) und müssen irgendwann nachgetragen werden. Halving-Phase und OPEX sind dagegen exakt berechenbar und veralten nie. Läuft eine Terminliste zur Neige (<60 Tage Restlauf), erscheint hier ein sichtbarer ⚠-Hinweis zum Nachpflegen — die Warnung steckt also nicht mehr nur in diesem Text."},
   clock:{t:"Markt-Uhr",what:"Zeigt, ob bestimmte Wochentage (und bei 4h: Tageszeiten) historisch häufiger positiv schlossen, plus die durchschnittliche Bewegung. % = Anteil positiver Bars an diesem Tag.",hist:"Reale Mikrostruktur-Effekte über Liquidität und Sessions — aber schwach, nicht stationär und nicht handelbar. Abweichungen von 50% sind meist klein und wandern über die Zeit. Auf Wochen-Basis nicht aussagekräftig."},
   round:{t:"Runde Zahlen",what:"Blendet die nächstgelegenen runden Preismarken ein ($10k-Schritte). An solchen Marken ballen sich oft Orders, weshalb sie als weiche Unterstützung/Widerstand wirken können.",hist:"Ein realer behavioraler Effekt (Menschen setzen Ziele und Stops an runden Zahlen), aber weich und unzuverlässig — die Linien sind Orientierung, keine Garantie für Wendepunkte."},
 };
@@ -633,10 +636,38 @@ const TF={
   "1w":{iv:"1w",barSec:604800, start:()=>Date.parse("2017-08-17T00:00:00Z"), win:26,wmin:10,wmax:52, gap:4,  ddWin:52,   regS:7,  regL:29,   maS:50,  maL:200,  maSL:"50W", maLL:"200W", H:[["1 Monat",4,"1M"],["1 Quartal",13,"1Q"],["Halbjahr",26,"6M"]]},
 };
 
+/* ===== Einstellungs-Persistenz (Council v10): dieselben Regler bei jedem Besuch = Prozess-
+   disziplin statt täglichem Neu-Drehen. Best effort via localStorage (try/catch, Standalone-HTML).
+   „Standard"-Button löscht alles und lädt neu. ===== */
+let PENDING_W=null;
+function saveSettings(){try{
+  localStorage.setItem("btf_settings",JSON.stringify({
+    tf:curTF,W:+$("cW").value,sim:+$("cSim").value,tol:+$("cTol").value,
+    mode:document.querySelector("#cMode .on").dataset.m,show:{...SHOW}
+  }));
+}catch(_){}}
+function loadSettings(){try{const s=JSON.parse(localStorage.getItem("btf_settings"));return (s&&typeof s==="object")?s:null;}catch(_){return null;}}
+function applySettings(s){
+  try{
+    if(typeof s.sim==="number"){const el=$("cSim");const v=Math.min(+el.max,Math.max(+el.min,s.sim));el.value=v;$("vSim").textContent=v+"%";}
+    if(typeof s.tol==="number"){const el=$("cTol");const v=Math.min(+el.max,Math.max(+el.min,s.tol));el.value=v;$("vTol").textContent=v;}
+    if(s.mode){$("cMode").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m===s.mode));}
+    if(s.show&&typeof s.show==="object"){
+      for(const k of Object.keys(SHOW))if(typeof s.show[k]==="boolean")SHOW[k]=s.show[k];
+      $("toggles").querySelectorAll(".tg").forEach(t=>t.classList.toggle("on",!!SHOW[t.dataset.tg]));
+      $("cFund").querySelectorAll("button").forEach(b=>b.classList.toggle("on",(b.dataset.f==="1")===!!SHOW.fundReg));
+    }
+    if(s.tf&&TF[s.tf]){$("cTF").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.tf===s.tf));}
+    if(typeof s.W==="number")PENDING_W=s.W;
+    syncModeUI();
+  }catch(_){}
+}
 async function init(){
   wireIntro();
   wireControls();
-  await loadTF("1d");
+  const s=loadSettings();
+  if(s)applySettings(s);
+  await loadTF((s&&s.tf&&TF[s.tf])?s.tf:"1d");
 }
 /* Onboarding: standardmässig sichtbar; einmal geschlossen, bleibt es geschlossen (best effort via localStorage). */
 function wireIntro(){
@@ -667,7 +698,10 @@ async function loadTF(tf){
     D.fundBar=null; D.fundEvents=null; D.oi=null;   // werden asynchron nachgeladen
     curTF=tf; BARSEC=cfg.barSec; HORIZONS=cfg.H; HMAX=cfg.H[cfg.H.length-1][1]; GAP=cfg.gap;
     // W-Regler an Zeitrahmen anpassen
-    const w=$("cW"); w.min=cfg.wmin; w.max=cfg.wmax; if(+w.value<cfg.wmin||+w.value>cfg.wmax){w.value=cfg.win;} $("vW").textContent=w.value;
+    const w=$("cW"); w.min=cfg.wmin; w.max=cfg.wmax;
+    if(PENDING_W!=null){if(PENDING_W>=cfg.wmin&&PENDING_W<=cfg.wmax)w.value=PENDING_W;PENDING_W=null;}
+    if(+w.value<cfg.wmin||+w.value>cfg.wmax){w.value=cfg.win;} $("vW").textContent=w.value;
+    const st=$("dataStamp");if(st)st.textContent="Daten geladen "+new Date().toLocaleTimeString("de-CH",{hour:"2-digit",minute:"2-digit"})+" Uhr";
     // Legenden-Labels
     $("legS").textContent=cfg.maSL; $("legL").textContent=cfg.maLL;
     $("status").style.display="none";
@@ -691,9 +725,11 @@ async function loadTF(tf){
     // Volume Profile: 90-Tage-Fenster, fix & zeitrahmen-unabhängig -> einmal holen, dann cachen
     if(VP===null){fetchVP().then(c=>{VP=computeVP(c);drawVP();}).catch(()=>{});} else {drawVP();}
     if(chart){try{const t0=D.t[D.N-1];chart.timeScale().setVisibleRange({from:D.t[Math.max(0,D.N-150)],to:t0+Math.round(HMAX*1.05)*BARSEC});}catch(_){}}
+    saveSettings();
   }catch(e){
     $("status").className="status err";
-    $("status").textContent="Kursverlauf konnte nicht geladen werden (Binance evtl. nicht erreichbar). Später erneut versuchen.";
+    $("status").innerHTML='Kursverlauf konnte nicht geladen werden (Binance evtl. nicht erreichbar). <button class="autobtn" id="retryBtn" style="margin-left:8px">↺ Erneut versuchen</button>';
+    const rb=$("retryBtn");if(rb)rb.addEventListener("click",()=>{loadTF(tf);});
   }
   loadingTF=false;
 }
@@ -805,13 +841,13 @@ function befundHead(paths){
   const [lbl,h]=HORIZONS[1];
   const rets=paths.map(p=>p.path[h]).filter(x=>x!=null);
   if(rets.length<3)return 'Zu wenige ähnliche Lagen für eine belastbare Aussage.';
-  const pos=Math.round(rets.filter(x=>x>0).length/rets.length*100);
+  const nPos=rets.filter(x=>x>0).length,pos=Math.round(nPos/rets.length*100);
   const md=median(rets);
   const dips=paths.map(p=>{let m=0;for(let d=0;d<=h;d++)if(p.path[d]!=null&&p.path[d]<m)m=p.path[d];return m;});
   const dip=median(dips);
   const fmt=v=>(v>=0?"+":"")+v.toFixed(1)+"%";
   const tone=pos>=60?"up":pos<=40?"dn":"nu";
-  return `${paths.length} ähnliche Lagen · über <b>${lbl}</b> <b class="${tone}">${pos}%</b> höher · Median <b class="${md>=0?"up":"dn"}">${fmt(md)}</b> · Dip <b class="dn">${fmt(dip)}</b>`;
+  return `${paths.length} ähnliche Lagen · über <b>${lbl}</b> <b class="${tone}">${nPos} von ${rets.length}</b> höher · Median <b class="${md>=0?"up":"dn"}">${fmt(md)}</b> · Dip <b class="dn">${fmt(dip)}</b>`;
 }
 
 /* Verteilungs-Kennzahlen einer Episoden-Menge: über wie viele Jahre, wie konzentriert. */
@@ -844,6 +880,15 @@ function fragility(scan,mode,sim,tol,W){
     const p=pathsFromScan(scan,mode,s==null?0:s,t==null?0:t,W);
     if(p.length>=3){const r=p.map(x=>x.path[midH]).filter(x=>x!=null);if(r.length>=3)meds.push(median(r));}
   }
+  // Council v10: auch das FENSTER W ist ein Freiheitsgrad — Nachbar-Fenster bei aktuellem sim/tol
+  // mitprüfen (2 zusätzliche schwere Scans, nur hier; nie Teil einer Optimierung).
+  const Wmin=+$("cW").min,Wmax=+$("cW").max,dWv=Math.max(2,Math.round(W*0.12));
+  for(const Wv of [W-dWv,W+dWv]){
+    if(Wv<Wmin||Wv>Wmax||Wv===W)continue;
+    const sc=scanCandidates(Wv,mode);
+    const p=pathsFromScan(sc,mode,usesShape?sim:0,usesRegime?tol:0,Wv);
+    if(p.length>=3){const r=p.map(x=>x.path[midH]).filter(x=>x!=null);if(r.length>=3)meds.push(median(r));}
+  }
   return meds.length<2?{spread:null,n:meds.length}:{spread:Math.max(...meds)-Math.min(...meds),n:meds.length};
 }
 function confidence(scan,paths,mode,sim,tol,W){
@@ -862,10 +907,11 @@ function confidence(scan,paths,mode,sim,tol,W){
       ? `überwiegend aus der ${em.domKey==="pre"?"Vor-2020":"Prä-ETF"}-Ära — die heutige Marktstruktur (ETF, Institutionen) ist dort kaum vertreten, also breiter denken`
       : em.domShare>0.7?`geballt in der ${EPOCHS[em.domKey].s}-Ära`
       : "brauchbar über mehrere Markt-Epochen gestreut";
+  const sp=fr.spread==null?null:fr.spread.toFixed(1);
   const fragText=fragLvl==="na"?"Stabilität über Einstellungen nicht bestimmbar"
-      : fragLvl==="stabil"?"der Befund bleibt stabil, wenn man die Regler leicht variiert"
-      : fragLvl==="mässig"?"der Befund verschiebt sich merklich bei kleinen Regler-Änderungen"
-      : "der Befund springt stark, sobald man die Regler nur leicht ändert — nicht überinterpretieren";
+      : fragLvl==="stabil"?`der Befund bleibt stabil, wenn man Regler und Fenster leicht variiert (Median-Spannweite ${sp} Pp)`
+      : fragLvl==="mässig"?`der Befund verschiebt sich merklich bei kleinen Änderungen an Reglern oder Fenster (Spannweite ${sp} Pp)`
+      : `der Befund springt stark (Spannweite ${sp} Pp), sobald man Regler oder Fenster nur leicht ändert — nicht überinterpretieren`;
   return {level,chip,cls,epoch:em,frag:fr,fragLvl,epStale,epochText,fragText};
 }
 function confChip(conf){
@@ -920,7 +966,7 @@ function autoTune(){
     if(chosen.tol!=null){$("cTol").value=chosen.tol;$("vTol").textContent=chosen.tol;}
     $("autoNote").textContent=note;
     btn.disabled=false;btn.textContent=prev;
-    recompute();
+    recompute();saveSettings();
   },30);
 }
 
@@ -983,8 +1029,8 @@ function renderConcentration(paths){
   const dots=ts.map(t=>`<i class="cdot" style="left:${((t-t0)/span*100).toFixed(2)}%;background:${epochOf(t).c}"></i>`).join("");
   const warn=share>=60||years<=2;
   const msg=warn
-    ? `Konzentriert: ${share}% der Episoden liegen in einem einzigen ~6-Monats-Fenster, verteilt auf nur ${years} Kalenderjahr${years>1?"e":""}. Effektiv stützen sich die Zahlen unten auf sehr wenige unabhängige Marktphasen — die Prozentwerte sind weicher, als sie aussehen.`
-    : `Verteilt über ${years} Kalenderjahre · dichtester Cluster ${share}% in ~6 Monaten. Brauchbare Streuung über mehrere Marktphasen.`;
+    ? `Konzentriert: ${best} von ${ts.length} Episoden (${share}%) liegen in einem einzigen ~6-Monats-Fenster, verteilt auf nur ${years} Kalenderjahr${years>1?"e":""}. Effektiv stützen sich die Zahlen unten auf sehr wenige unabhängige Marktphasen — die Werte sind weicher, als sie aussehen.`
+    : `Verteilt über ${years} Kalenderjahre · dichtester Cluster ${best} von ${ts.length} Episoden (${share}%) in ~6 Monaten. Brauchbare Streuung über mehrere Marktphasen.`;
   const present=["pre","mid","etf"].filter(k=>paths.some(p=>p.ep.k===k));
   const leg=present.map(k=>`<span class="eleg"><i style="background:${EPOCHS[k].c}"></i>${EPOCHS[k].s} (${paths.filter(p=>p.ep.k===k).length})</span>`).join("");
   el.innerHTML=`<div class="ctrack"><span class="cedge cstart">${new Date(t0*1000).getUTCFullYear()}</span>${dots}<span class="cedge cend">heute</span></div>
@@ -998,14 +1044,14 @@ function renderStats(paths){
   g.innerHTML=HORIZONS.map(([lbl,h])=>{
     const rets=paths.map(p=>p.path[h]).filter(x=>x!=null);
     const dips=paths.map(p=>{let m=0;for(let d=0;d<=h;d++)if(p.path[d]!=null&&p.path[d]<m)m=p.path[d];return m;});
-    const pos=Math.round(rets.filter(x=>x>0).length/rets.length*100);
+    const nPos=rets.filter(x=>x>0).length,pos=Math.round(nPos/rets.length*100);
     const md=median(rets),p10=quantile(rets,.1),p90=quantile(rets,.9),dip=median(dips);
     const posc=pos>=60?"up":pos<=40?"dn":"nu";
     const fmt=v=>(v>=0?"+":"")+v.toFixed(1)+"%";
     const arr=v=>v>=0?"▲":"▼";
     return `<div class="hcard">
       <div class="hz">${lbl}<span class="n">${rets.length} Episoden</span></div>
-      <div class="hrow"><span class="k">positiv</span><span class="v ${posc}">${pos}%</span></div>
+      <div class="hrow"><span class="k">positiv</span><span class="v ${posc}">${nPos} von ${rets.length} (${pos}%)</span></div>
       <div class="hrow"><span class="k">Median</span><span class="v ${md>=0?'up':'dn'}">${arr(md)} ${fmt(md)}</span></div>
       <div class="hrow"><span class="k">Spanne 10–90%</span><span class="v nu">${fmt(p10)} … ${fmt(p90)}</span></div>
       <div class="hrow"><span class="k">Ø grösster Dip</span><span class="v dn">▼ ${fmt(dip)}</span></div>
@@ -1178,9 +1224,16 @@ function renderCycle(){
   if(c.cpi==null||dC<60)sm.push(`CPI-Liste endet ${lastC}`);
   if(c.fomc==null||dF<60)sm.push(`FOMC-Liste endet ${lastF}`);
   const stale=sm.length?`<div class="tr stalehint"><span class="k">⚠ Terminliste</span><span class="v">${sm.join(" · ")} — bald nachpflegen</span></div>`:"";
+  // 30-Tage-Veränderung als Euphorie-Basisrate (Council v10). Streng deskriptiv, gemessen aus den
+  // bereits geladenen Kerzen. ⚠ Blasen-Radar NUR bei Verdopplung binnen ~30 T (historisch eines
+  // der zuverlässigsten Überhitzungs-Signale) — feuert per Design fast nie, kein Caveat-Rauschen.
+  let m30=null;{const cut=D.t[D.N-1]-30*86400;for(let i=D.N-1;i>=0;i--){if(D.t[i]<=cut){m30=(D.c[D.N-1]/D.c[i]-1)*100;break;}}}
+  const m30row=m30==null?"":`<div class="tr"><span class="k">30-Tage-Veränderung</span><span class="v ${m30>=0?"up":"dn"}">${m30>=0?"▲":"▼"} ${Math.abs(m30).toFixed(1)}%</span></div>`;
+  const bubble=(m30!=null&&m30>=100)?`<div class="tr stalehint"><span class="k">⚠ Blasen-Radar</span><span class="v">+${m30.toFixed(0)}% in ~30 T — nach solchen Verdopplungen folgten historisch regelmässig scharfe Rücksetzer. Weiche Tendenz, kein Timing-Signal.</span></div>`:"";
   $("cycleBox").innerHTML=`
     <div class="tr"><span class="k">Halving-Phase</span><span class="v">Tag ${c.days} · ${c.cyclePct}% durch ~4-Jahres-Zyklus</span></div>
     <div class="tr"><span class="k">Seit letztem Hoch</span><span class="v">${c.dHigh} Bars · Hoch $${Math.round(c.hiPrice).toLocaleString("de-CH")}</span></div>
+    ${m30row}${bubble}
     ${ev("Nächstes FOMC",c.fomc,c.fomcDays)}
     ${ev("Nächste CPI-Veröffentlichung",c.cpi,c.cpiDays)}
     ${ev("Nächster Quartals-OPEX",c.opex,c.opexDays)}
@@ -1209,7 +1262,7 @@ function jumpTo(i){
 
 /* ---- Steuerung ---- */
 let recT=null;
-function debounced(){clearTimeout(recT);recT=setTimeout(recompute,180);}
+function debounced(){clearTimeout(recT);recT=setTimeout(()=>{recompute();saveSettings();},180);}
 function wireControls(){
   $("cW").addEventListener("input",e=>{$("vW").textContent=e.target.value;debounced();});
   $("cSim").addEventListener("input",e=>{$("vSim").textContent=e.target.value+"%";debounced();});
@@ -1229,12 +1282,15 @@ function wireControls(){
     else if(k==="swings")drawSwingLevels();
     else if(k==="vp")drawVP();
     else redrawOverlays();
+    saveSettings();
   }));
   // Funding ins Regime ist jetzt ein Matching-Schalter (oben), nicht mehr ein Anzeige-Toggle
   $("cFund").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
     $("cFund").querySelectorAll("button").forEach(x=>x.classList.remove("on"));
-    b.classList.add("on");SHOW.fundReg=b.dataset.f==="1";recompute();
+    b.classList.add("on");SHOW.fundReg=b.dataset.f==="1";recompute();saveSettings();
   }));
+  // Standard-Reset: gespeicherte Einstellungen löschen und frisch laden (Council v10)
+  $("resetBtn").addEventListener("click",()=>{try{localStorage.removeItem("btf_settings");}catch(_){ }location.reload();});
   // Verhaltens-Schicht ein-/ausklappen (Standard: zu)
   $("phaseCToggle").addEventListener("click",()=>{
     const nowCollapsed=$("phaseCWrap").classList.toggle("collapsed");
